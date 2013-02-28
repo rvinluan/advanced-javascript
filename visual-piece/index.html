@@ -36,7 +36,6 @@
 		var mouseX, mouseY;
 		var hexagons = [];
 
-		//the hexagon object
 		function Hexagon(_completionTime, _strokeColor, _strokeWeight, _size) {
 			this.angle = rvutil.random(0, 360);
 			this.rotationSpeed = rvutil.random(-2, 2);
@@ -50,7 +49,9 @@
 			this.forwards = false;
 			this.offsetX = rvutil.random(-8,8);
 			this.offsetY = rvutil.random(-8,8);
-			this.update = function() {
+		}
+		
+		Hexagon.prototype.update = function() {
 				this.angle+= this.rotationSpeed;
 				if(this.angle >= 360)
 					this.angle = 0;
@@ -65,8 +66,9 @@
 					this.completion = rvutil.map( now, 0, this.completionTime, 0, 360 );
 				else
 					this.completion = rvutil.map( now, 0, this.completionTime, 360, 0 );
-			}
-			this.draw = function() {
+		}
+
+		Hexagon.prototype.draw = function() {
 				ctx.save();
 				ctx.translate(cw/2 + this.offsetX, ch/2 + this.offsetY);
 				ctx.rotate(rvutil.toRad(this.angle));
@@ -77,7 +79,6 @@
 				ctx.stroke();
 				ctx.fill();
 				ctx.restore();
-			}
 		}
 
 		//draw a grid of dots
@@ -191,6 +192,7 @@
 				now = 0;
 			}
 			//ctx.clearRect(0,0,cw,ch);
+			ctx.globalAlpha = 1;
 			ctx.fillStyle = "#333333";
 			ctx.fillRect(0,0,cw,ch);
 			//dotGrid();
@@ -222,7 +224,7 @@
 			for(var i = 0; i < palette.length * 2; i++) {
 				hexagons.push(new Hexagon(
 					rvutil.random(10000,20000), 
-					palette[ i % palette.length ], 
+					palette[ (i % palette.length) ], 
 					rvutil.random(1, 10), 
 					80 + (i+1)*(rvutil.random(10,30))
 					)
