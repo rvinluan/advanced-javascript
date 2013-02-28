@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
+<!-- Consider specifying the language of your content by adding the `lang` attribute to <html> -->
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+<head>
+    <meta charset="utf-8">
+
+    <title></title>
+    <meta name="description" content="">
+
+    <!-- Mobile viewport optimized: h5bp.com/viewport -->
+    <meta name="viewport" content="width=device-width">
+
+    <!-- Place favicon.ico and apple-touch-icon.png in the root directory: mathiasbynens.be/notes/touch-icons -->
+
+    <style type="text/css">
+    	body {margin: 0; padding: 0; overflow:hidden;}
+		canvas { margin: 0; padding: 0; position: absolute;}
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js" type="text/javascript"></script>
+    <script src="rv-util.js" type="text/javascript"></script>
+    <script src="requestAnimationFrame-polyfill.js"></script>
+</head>
+<body>
+	<canvas id="canvas"></canvas>
+	<script>
+		var canvas = document.getElementById('canvas');
+		var ctx = canvas.getContext('2d');
+		var cw = canvas.width = $(window).width();
+		var ch = canvas.height = $(window).height();
+		var startTime = new Date().getTime();
+		var angle = 0;
+		var mouseX, mouseY;
+		var hexagons = [];
+
+		//the hexagon object
+		function Hexagon(_completionTime, _strokeColor, _strokeWeight, _size) {
+			this.angle = rvutil.random(0, 360);
+			this.rotationSpeed = rvutil.random(-2, 2);
+			this.completion = 0;
+			this.strokeStyle = _strokeColor;
+			this.strokeWidth = _strokeWeight;
+			this.fillStyle = 'transparent';
+			this.radius = _size;
+			this.completionTime = _completionTime;
+			this.timePassed = 0;
+			this.forwards = false;
+			this.offsetX = rvutil.random(-8,8);
+			this.offsetY = rvutil.random(-8,8);
+			this.update = function() {
+				this.angle+= this.rotationSpeed;
+				if(this.angle >= 360)
+					this.angle = 0;
+
+				var now = new Date().getTime() - this.timePassed;
+				if(now > this.completionTime) {
+					this.timePassed = new Date().getTime();
+					now = 0;
+					this.forwards = !this.forwards;
+				}
+				if(this.forwards)
+					this.completion = rvutil.map( now, 0, this.completionTime, 0, 360 );
+				else
+					this.completion = rvutil.map( now, 0, this.completionTime, 360, 0 );
+			}
+			this.draw = function() {
+				ctx.save();
+				ctx.translate(cw/2 + this.offsetX, ch/2 + this.offsetY);
+				ctx.rotate(rvutil.toRad(this.angle));
+				ctx.strokeStyle = this.strokeStyle;
+				ctx.fillStyle = this.fillStyle;
+				ctx.lineWidth = this.strokeWidth;
+				hex(0,0, this.radius, this.completion);
+				ctx.stroke();
+				ctx.fill();
+				ctx.restore();
+			}
+		}
+
+		//draw a grid of dots
+		function dotGrid() {
+			var circleSize = 1;
+			var circleSpacing = 25;
+			var x, y;
+			ctx.fillStyle = "#666";
+			ctx.strokeStyle = "none";
+			ctx.beginPath();
+			for(var i = 0; i < Math.ceil(cw / (circleSpacing+circleSize))+1; i++) {
+				for(var j = 0; j < Math.ceil(ch / (circleSpacing+circleSize))+1; j++) {
+					y = (j+1) * circleSpacing - circleSize / 2;
+					if(j % 2 == 0) {
+						x = (i+1) * circleSpacing - circleSize / 2;
+					}
+					else {
+						x = ((i+1) * circleSpacing) - circleSize/2 + (circleSpacing/2);
+					}
+					//ctx.moveTo(x, y);
+					ctx.arc(x, y, circleSize, 0, Math.PI * 2);
+				}
+			}
+			ctx.closePath();
+			ctx.fill();
+		}
+
+		//draw a hexagon, or a partial one.
+		function hex(x, y, r, arcAngle) {
+			var k = Math.sqrt((3/4)*r*r);
+			ctx.save();
+			ctx.translate(x, y);
+			ctx.beginPath();
+			ctx.moveTo(0, r);
+
+			if(arcAngle >= 60)
+				ctx.lineTo(k, r/2);
+			else {
+				ctx.lineTo(
+					rvutil.map(arcAngle, 0, 60, 0, k),
+					rvutil.map(arcAngle, 0, 60, r, r/2)
+				);
+				ctx.restore();
+				return;
+			}
+
+			if(arcAngle >= 120)
+				ctx.lineTo(k, -r/2);
+			else {
+				ctx.lineTo(
+					rvutil.map(arcAngle, 60, 120, k, k),
+					rvutil.map(arcAngle, 60, 120, r/2, -r/2)
+				);
+				ctx.restore();
+				return;
+			}
+
+			if(arcAngle >= 180)
+				ctx.lineTo(0, -r);
+			else {
+				ctx.lineTo(
+					rvutil.map(arcAngle, 120, 180, k, 0),
+					rvutil.map(arcAngle, 120, 180, -r/2, -r)
+				);
+				ctx.restore();
+				return;
+			}
+
+			if(arcAngle >= 240)
+				ctx.lineTo(-k, -r/2);
+			else {
+				ctx.lineTo(
+					rvutil.map(arcAngle, 180, 240, 0, -k),
+					rvutil.map(arcAngle, 180, 240, -r, -r/2)
+				);
+				ctx.restore();
+				return;
+			}
+
+			if(arcAngle>= 300)
+				ctx.lineTo(-k, r/2);
+			else {
+				ctx.lineTo(
+					rvutil.map(arcAngle, 240, 300, -k, -k),
+					rvutil.map(arcAngle, 240, 300, -r/2, r/2)
+				);
+				ctx.restore();
+				return;
+			}
+
+			if(arcAngle >= 360)	{		
+				ctx.closePath();
+				ctx.restore();
+			}
+			else {
+				ctx.lineTo(
+					rvutil.map(arcAngle, 300, 360, -k, 0),
+					rvutil.map(arcAngle, 300, 360, r/2, r)
+				);
+				ctx.restore();
+				return;
+			}
+		}
+		
+		function animate() {
+			requestAnimationFrame(animate);
+			var timeToComplete = 3000;
+			var now = new Date().getTime() - startTime;
+			if(now > timeToComplete) {
+				startTime = new Date().getTime();
+				now = 0;
+			}
+			//ctx.clearRect(0,0,cw,ch);
+			ctx.fillStyle = "#333333";
+			ctx.fillRect(0,0,cw,ch);
+			//dotGrid();
+			for(var h in hexagons) {
+				hexagons[h].update();
+				ctx.globalAlpha = 0.7;
+				hexagons[h].draw();
+			}
+
+			angle++;
+			if(angle >= 360) {
+				angle = 0;
+			}
+		}
+
+		function init() {
+			var palette = [
+				"#CFF09E",
+				"#A8DBA8",
+				"#79BD9A",
+				"#3B8686",
+				"#0B486B"
+			];
+			$('#canvas').on('mousemove', function(event){
+				mouseX = event.clientX;
+				mouseY = event.clientY;
+			});
+
+			for(var i = 0; i < palette.length * 2; i++) {
+				hexagons.push(new Hexagon(
+					rvutil.random(10000,20000), 
+					palette[ i % palette.length ], 
+					rvutil.random(1, 10), 
+					80 + (i+1)*(rvutil.random(10,30))
+					)
+				);
+			}
+			animate();
+		}
+
+		init();
+
+
+	</script>
+</body>
+</html>
