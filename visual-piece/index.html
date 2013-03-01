@@ -33,17 +33,25 @@
 		var ch = canvas.height = $(window).height();
 		var startTime = new Date().getTime();
 		var angle = 0;
-		var mouseX, mouseY;
+		var mouseX = cw/2, mouseY = ch/2;
 		var hexagons = [];
 
-		function Hexagon(_completionTime, _strokeColor, _strokeWeight, _size) {
+		function Hexagon(_completionTime, _strokeColor, _strokeWeight, _sizeMax, _sizeMin, _followRate) {
+			this.x = cw/2;
+			this.y = ch/2;
+			this.followRate = _followRate;
 			this.angle = rvutil.random(0, 360);
 			this.rotationSpeed = rvutil.random(-2, 2);
 			this.completion = 0;
 			this.strokeStyle = _strokeColor;
 			this.strokeWidth = _strokeWeight;
 			this.fillStyle = 'transparent';
-			this.radius = _size;
+			this.radius = _sizeMin;
+			this.radiusMax = _sizeMax;
+			this.radiusMin = _sizeMin;
+			this.currentR = 0;
+			this.growing = true;
+			this.timeToGrow = rvutil.random(0.5, 2);
 			this.completionTime = _completionTime;
 			this.timePassed = 0;
 			this.forwards = false;
@@ -52,6 +60,18 @@
 		}
 		
 		Hexagon.prototype.update = function() {
+				this.currentR+= 0.006;
+				if(this.currentR >= this.timeToGrow) {
+					this.currentR = 0;
+					this.growing = !this.growing;
+				}
+				if(this.growing)
+					this.radius = rvutil.map(this.currentR, 
+						0, this.timeToGrow, this.radiusMin, this.radiusMax);
+				else
+					this.radius = rvutil.map(this.currentR, 
+						0, this.timeToGrow, this.radiusMax, this.radiusMin);
+
 				this.angle+= this.rotationSpeed;
 				if(this.angle >= 360)
 					this.angle = 0;
@@ -66,11 +86,26 @@
 					this.completion = rvutil.map( now, 0, this.completionTime, 0, 360 );
 				else
 					this.completion = rvutil.map( now, 0, this.completionTime, 360, 0 );
+
+				//move towards the mouse
+				//we usin' vector math, bitch
+				var deltaX = mouseX - this.x;
+				var deltaY = mouseY - this.y;
+				var hyp = Math.sqrt( (deltaX*deltaX) + (deltaY*deltaY) );
+				if(hyp == 0 || hyp < this.followRate) {
+					this.x = mouseX;
+					this.y = mouseY;
+					return;
+				}
+				this.x += (deltaX / hyp) * this.followRate;
+				this.y += (deltaY / hyp) * this.followRate;
+				console.log(this.x);
+
 		}
 
 		Hexagon.prototype.draw = function() {
 				ctx.save();
-				ctx.translate(cw/2 + this.offsetX, ch/2 + this.offsetY);
+				ctx.translate(this.x, this.y);
 				ctx.rotate(rvutil.toRad(this.angle));
 				ctx.strokeStyle = this.strokeStyle;
 				ctx.fillStyle = this.fillStyle;
@@ -221,12 +256,14 @@
 				mouseY = event.clientY;
 			});
 
-			for(var i = 0; i < palette.length * 2; i++) {
+			for(var i = 0; i < 6; i++) {
 				hexagons.push(new Hexagon(
 					rvutil.random(10000,20000), 
 					palette[ (i % palette.length) ], 
 					rvutil.random(1, 10), 
-					80 + (i+1)*(rvutil.random(10,30))
+					160 + (i+1)*(rvutil.random(10,30)),
+					80 + (i+1)*(rvutil.random(10,30)),
+					rvutil.map(i,0,6,15,10)
 					)
 				);
 			}

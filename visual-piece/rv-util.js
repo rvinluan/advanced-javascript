@@ -91,14 +91,14 @@
     * moves a value towards another value by 1
     *
     */
-    ro.moveValueTowards = function(val1, val2) {
+    ro.moveValueTowards = function(val1, val2, rate) {
     	var dist = Math.abs(val1 - val2);
-    	if(val1 === val2 || dist <= 1 ) {
+    	if(val1 === val2 || dist <= rate ) {
     		return val2;
     	} else if(val1 < val2) {
-    		return val1 + 5;
+    		return val1 + rate;
     	} else {
-    		return val1 - 5;
+    		return val1 - rate;
     	}
     }
 
