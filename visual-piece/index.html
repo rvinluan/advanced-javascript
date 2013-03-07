@@ -94,19 +94,15 @@
 				var hyp = Math.sqrt( (deltaX*deltaX) + (deltaY*deltaY) );
 				var followSpeed;
 				if(hyp > 100) {
-					this.followSpeed = rvutil.map( hyp, 100, 300, this.followRate, this.followRate*3 );
+					followSpeed = rvutil.map( hyp, 100, 300, this.followRate, this.followRate*3 );
 				} else {
-					this.followRate = this.followRate;
+					followSpeed = this.followRate;
 				}
-				if(hyp == 0 || hyp < this.followSpeed) {
-					this.x = mouseX;
-					this.y = mouseY;
+				if(hyp == 0 || hyp < followSpeed) {
 					return;
 				}
-				this.x += (deltaX / hyp) * this.followSpeed;
-				this.y += (deltaY / hyp) * this.followSpeed;
-				console.log(this.x);
-
+				this.x += (deltaX / hyp) * followSpeed;
+				this.y += (deltaY / hyp) * followSpeed;
 		}
 
 		Hexagon.prototype.draw = function() {
@@ -226,13 +222,6 @@
 		
 		function animate() {
 			requestAnimationFrame(animate);
-			var timeToComplete = 3000;
-			var now = new Date().getTime() - startTime;
-			if(now > timeToComplete) {
-				startTime = new Date().getTime();
-				now = 0;
-			}
-			//ctx.clearRect(0,0,cw,ch);
 			ctx.globalAlpha = 1;
 			ctx.fillStyle = "#333333";
 			ctx.fillRect(0,0,cw,ch);
@@ -241,12 +230,7 @@
 				hexagons[h].update();
 				ctx.globalAlpha = 0.7;
 				hexagons[h].draw();
-			}
-
-			angle++;
-			if(angle >= 360) {
-				angle = 0;
-			}
+			}	
 		}
 
 		function init() {
@@ -264,12 +248,12 @@
 
 			for(var i = 0; i < 6; i++) {
 				hexagons.push(new Hexagon(
-					rvutil.random(10000,20000), 
-					palette[ (i % palette.length) ], 
-					rvutil.random(1, 10), 
-					160 + (i+1)*(rvutil.random(10,30)),
-					80 + (i+1)*(rvutil.random(10,30)),
-					rvutil.map(i,0,6,6,3)
+					rvutil.random(10000,20000), //timeToComplete
+					palette[ (i % palette.length) ], //color
+					rvutil.random(1, 10), //strokeWidth
+					160 + (i+1)*(rvutil.random(10,30)), //maximumSize
+					80 + (i+1)*(rvutil.random(10,30)), //minimumSize
+					rvutil.map(i,0,6,6,3) //followRate
 					)
 				);
 			}
