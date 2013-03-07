@@ -92,13 +92,19 @@
 				var deltaX = mouseX - this.x;
 				var deltaY = mouseY - this.y;
 				var hyp = Math.sqrt( (deltaX*deltaX) + (deltaY*deltaY) );
-				if(hyp == 0 || hyp < this.followRate) {
+				var followSpeed;
+				if(hyp > 100) {
+					this.followSpeed = rvutil.map( hyp, 100, 300, this.followRate, this.followRate*3 );
+				} else {
+					this.followRate = this.followRate;
+				}
+				if(hyp == 0 || hyp < this.followSpeed) {
 					this.x = mouseX;
 					this.y = mouseY;
 					return;
 				}
-				this.x += (deltaX / hyp) * this.followRate;
-				this.y += (deltaY / hyp) * this.followRate;
+				this.x += (deltaX / hyp) * this.followSpeed;
+				this.y += (deltaY / hyp) * this.followSpeed;
 				console.log(this.x);
 
 		}
