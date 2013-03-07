@@ -41,7 +41,7 @@
 			this.y = ch/2;
 			this.followRate = _followRate;
 			this.angle = rvutil.random(0, 360);
-			this.rotationSpeed = rvutil.random(-2, 2);
+			this.rotationSpeed = rvutil.random(-4, 4);
 			this.completion = 0;
 			this.strokeStyle = _strokeColor;
 			this.strokeWidth = _strokeWeight;
@@ -263,7 +263,7 @@
 					rvutil.random(1, 10), 
 					160 + (i+1)*(rvutil.random(10,30)),
 					80 + (i+1)*(rvutil.random(10,30)),
-					rvutil.map(i,0,6,15,10)
+					rvutil.map(i,0,6,6,3)
 					)
 				);
 			}
