@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
+<!-- Consider specifying the language of your content by adding the `lang` attribute to <html> -->
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+<head>
+    <meta charset="utf-8">
+
+    <title></title>
+    <meta name="description" content="">
+
+    <!-- Mobile viewport optimized: h5bp.com/viewport -->
+    <meta name="viewport" content="width=device-width">
+
+    <!-- Place favicon.ico and apple-touch-icon.png in the root directory: mathiasbynens.be/notes/touch-icons -->
+    <style type="text/css">
+		body { margin: 0; padding-top: 75px;}
+
+		.square {
+			margin: 0 auto;
+			padding: 0;
+			position: relative;
+			width: 612px;
+			height: 612px;
+			-webkit-perspective: 2000px;
+		}
+
+		img{
+			position: absolute;
+			margin: 0; padding: 0;
+			-webkit-transition: -webkit-transform .6s ease-out;
+		}
+
+		.flipped {
+			-webkit-transform: rotateY(90deg);
+		}
+    </style>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js" type="text/javascript"></script>
+</head>
+<body>
+		<div class="square">
+			<img data-image-number="0" class="sideA" src="" alt="">
+			<img data-image-number="1" class="sideB flipped" src="" alt="">
+		</div>
+
+	    <script type="text/javascript">
+	    	var url = "https://api.instagram.com/v1/users/189958882/media/recent?access_token=189958882.1fb234f.c6752036d30a451a8fe672f3b19d6241&callback=?";
+
+	    	var promise = $.getJSON(url, {
+	    		access_token: "189958882.1fb234f.c6752036d30a451a8fe672f3b19d6241",
+	    		count: 20
+	    	}, handleResponse);
+
+	    	var returnData;
+
+	    	$("img").on('click', function(){
+	    		flip( $(this) );
+	    	});
+
+	    	function flip( $img ) {
+	    		var other;
+	    		if($img.hasClass('sideA')) {
+	    			other = $('.sideB');
+	    		} else {
+	    			other = $('.sideA');
+	    		}
+
+	    		$img.addClass('flipped');
+	    		$img.on('webkitTransitionEnd', function(){
+	    			console.log('msg');
+		    		reassignPhoto($img);
+	    			other.removeClass('flipped');
+	    			$(this).off('webkitTransitionEnd');
+	    		});
+	    	}
+
+	    	function reassignPhoto( $img ) {
+	    		var imgno = $img.attr('data-image-number');
+	    		imgno = parseInt(imgno, 10) + 2;
+	    		var photoLink = returnData.data[imgno].images.standard_resolution.url;
+	    		$img.attr({
+	    			src: photoLink,
+	    			"data-image-number": imgno
+	    		});
+	    	}
+
+	    	function handleResponse( data ) {
+	    		returnData = data;
+	    		console.log(data)
+	    		var photoLink1 = data.data[0].images.standard_resolution.url;
+	    		var photoLink2 = data.data[1].images.standard_resolution.url;
+	    		$(".sideA").attr('src', photoLink1);
+	    		$(".sideB").attr('src', photoLink2);
+	    	}
+
+	    </script>
+</body>
+</html>
