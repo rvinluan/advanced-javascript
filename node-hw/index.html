@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
+<!-- Consider specifying the language of your content by adding the `lang` attribute to <html> -->
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+<head>
+    <meta charset="utf-8">
+
+    <title></title>
+    <meta name="description" content="">
+
+    <!-- Mobile viewport optimized: h5bp.com/viewport -->
+    <meta name="viewport" content="width=device-width">
+
+    <!-- Place favicon.ico and apple-touch-icon.png in the root directory: mathiasbynens.be/notes/touch-icons -->
+
+    <style>
+		body { font-family: Helvetica, sans-serif; }
+		code { padding: 1em; background-color: #eeeeee; }
+		td, th { padding: 1em; }
+		div { margin: 100px 0; }
+		#main { width: 700px; margin: 0 auto; }
+    </style>
+</head>
+<body>
+		<div id="main">
+	    <h1>Robert's Music Theory API</h1>
+	    <p>Get information about chords, keys, and scales.</p>
+
+	    <div id="chords">
+		    <code>/chords/:chord</code>
+		    <h3>returns the notes in the chord given.</h3>
+		    <h4>Examples:</h4>
+		    <table>
+		    	<tr>
+		    		<th>Request</th>
+		    		<th>Response</th>
+		    	</tr>
+		    	<tr>
+		    		<td>Cmaj</td>
+		    		<td><code>["C", "E", "G"]</code></td>
+		    	</tr>
+		    	<tr>
+		    		<td>E_flataug</td>
+		    		<td><code>["D#", "G", "B"]</code></td>
+		    	</tr>
+		    	<tr>
+		    		<td>F_sharpdim</td>
+		    		<td><code>["F#", "A", "C"]</code></td>
+		    	</tr>
+		    </table>
+		</div>
+	    <div id="chords">
+		    <code>/scales/:root[?scale=":scale"]</code>
+		    <h3>returns the notes in the scale given.</h3>
+		    <h4>Optional Parameters:</h4>
+		    <table>
+		    	<tr>
+		    		<th>parameter</th>
+		    		<th>options</th>
+		    	</tr>
+		    	<tr>
+		    		<td>scale</td>
+		    		<td><code>"major", "minor"</code></td>
+		    	</tr>
+		    </table>
+		    <h4>Examples:</h4>
+		    <table>
+		    	<tr>
+		    		<th>Request</th>
+		    		<th>Response</th>
+		    	</tr>
+		    	<tr>
+		    		<td>C</td>
+		    		<td><code>["C", "D", "E", "F", "G", "A", "B"]</code></td>
+		    	</tr>
+		    	<tr>
+		    		<td>B_flat</td>
+		    		<td><code>["A#", "C", "D", "D#", "F", "G", "A"]</code></td>
+		    	</tr>
+		    	<tr>
+		    		<td>F_sharp?scale=minor</td>
+		    		<td><code>["F#", "G#", "A", "B", "C#", "D", "E"]</code></td>
+		    	</tr>
+		    </table>
+		</div>
+		</div>
+</body>
+</html>
