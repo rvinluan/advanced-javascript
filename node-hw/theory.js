@@ -60,10 +60,10 @@ module.exports = {
 	* root isn't implemented right now.
 	*/
 	noteToString: function(note, root) {
+		//ok let's do this the lazy way.
 		var notes;
 		var sharpSet = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
 		var flatSet = ["C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B"];
-		//ok let's do this the lazy way.
 		switch(root) {
 			case 8: //G
 			case 3: //D
@@ -71,7 +71,6 @@ module.exports = {
 			case 5: //E
 			case 12: //B
 			case 7: //F#
-				console.log('sharp');
 				notes = sharpSet;
 			break;
 			default:
