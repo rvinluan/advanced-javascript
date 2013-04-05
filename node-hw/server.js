@@ -28,7 +28,12 @@ app.get('/scales/:note', function(request, response){
 		scale = "major";
 	}
 	var majorScale = theory.key(noteInt, scale);
-	response.send(theory.noteToString(majorScale));
+	response.send(
+		theory.noteToString(
+			majorScale,
+			noteInt
+		)
+	);
 });
 
 app.get('/chords/:chord', function(request, response) {
@@ -38,7 +43,12 @@ app.get('/chords/:chord', function(request, response) {
 		response.send("Invalid Chord! Please check the documentation and try again.");
 	}
 	//console.log(match);
-	response.send(theory.noteToString(theory.chord(match[1], match[3])));
+	response.send(
+		theory.noteToString(
+			theory.chord(theory.stringToNote(match[1]), match[3]), 
+			theory.stringToNote(match[1])
+		)
+	);
 });
 
 app.listen(8080);

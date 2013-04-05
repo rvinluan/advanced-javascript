@@ -33,7 +33,6 @@ module.exports = {
 	*
 	* takes a query string and parses it to find out an (integer) note.
 	* accepted syntaxes (with C# as an example)
-	* (note how the chord letter is capitalized)
 	* 1. c_sharp
 	* 2. d_flat
 	*
@@ -51,19 +50,45 @@ module.exports = {
 	},
 	/* noteToString
 	*
-	* takes an (integer) note and returns a string of the note name.
-	* for enharmonic equivalents, an optional root parameter can be given.
+	* Takes an (integer) note and returns a string of the note name.
+	* For enharmonic equivalents, an optional root parameter can be given.
 	* otherwise, notes will default to being sharp.
 	*
-	* Although root isn't implemented right now.
+	* Alternatively, takes an array of notes and calles noteToString on each of them,
+	* returning a new array.
+	* 
+	* root isn't implemented right now.
 	*/
 	noteToString: function(note, root) {
-		var notes = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+		var notes;
+		var sharpSet = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+		var flatSet = ["C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B"];
+		//ok let's do this the lazy way.
+		switch(root) {
+			case 8: //G
+			case 3: //D
+			case 10: //A
+			case 5: //E
+			case 12: //B
+			case 7: //F#
+				console.log('sharp');
+				notes = sharpSet;
+			break;
+			default:
+			case 1: //C
+			case 6: //F
+			case 11: //Bb
+			case 4: //Eb
+			case 9: //Ab
+			case 2: //Db
+				notes = flatSet;
+			break;
+		}
 		if(Object.prototype.toString.call( note ) === '[object Array]') {
 			//then this is an array
-			return note.map( function(elem) { return this.noteToString(elem) }, this);
+			return note.map( function(elem) { return this.noteToString(elem, root) }, this);
 		}
-		if(note == -1) {
+		if(note < 1 || note > 12) {
 			return "Invalid Note";
 		} else {
 			return notes[note-1];
@@ -71,7 +96,8 @@ module.exports = {
 	},
 	/* key
 	*
-	* takes an (integer) note and returns the notes in the provided scale.
+	* takes an (integer) note and returns the notes in the provided scale, as integers.
+	* to return an array of note names, call noteToString() on the output.
 	* accpeted scales:
 	* 1. major (default if scale is not provided)
 	* 2. minor
@@ -80,6 +106,9 @@ module.exports = {
 	* more scales to come.
 	*/
 	key: function(note, scale) {
+		if(note < 1 || note > 12) {
+			return "Invalid Note";
+		}
 		var a = [];
 		switch(scale) {
 			default:
@@ -128,7 +157,7 @@ module.exports = {
 	* more sounds to come.
 	*/
 	chord: function(note, sound) {
-		var scale = this.key( this.stringToNote(note) , "major");
+		var scale = this.key( note , "major");
 		var triad = [];
 		switch(sound) {
 			default:
