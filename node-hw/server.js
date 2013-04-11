@@ -12,6 +12,7 @@ app.get('/', function(request, response){
 app.get('/scales/:note', function(request, response){
 	var noteInt = theory.stringToNote(request.params.note);
 	var scale;
+	var callback = request.query.callback;
 	if(request.query.scale) {
 		switch(request.query.scale) {
 			case "major":
@@ -28,27 +29,35 @@ app.get('/scales/:note', function(request, response){
 		scale = "major";
 	}
 	var majorScale = theory.key(noteInt, scale);
-	response.send(
-		theory.noteToString(
+	var returnData = 		theory.noteToString(
 			majorScale,
 			noteInt
-		)
-	);
+		);
+	if(callback) {
+			response.send(callback + '(' + JSON.stringify(returnData) + ')');
+	} else {
+		response.send(returnData);
+	}
 });
 
 app.get('/chords/:chord', function(request, response) {
 	var regex = /^([a-g](_sharp|_flat)?)(maj|min|aug|dim)?$/i;
 	var match = regex.exec(request.params.chord);
+	var callback = request.query.callback;
 	if(!match) {
 		response.send("Invalid Chord! Please check the documentation and try again.");
 	}
-	//console.log(match);
-	response.send(
-		theory.noteToString(
+
+	var returnData = theory.noteToString(
 			theory.chord(theory.stringToNote(match[1]), match[3]), 
 			theory.stringToNote(match[1])
-		)
-	);
+		);
+
+	if(callback) {
+			response.send(callback + '(' + JSON.stringify(returnData) + ')');
+	} else {
+		response.send(returnData);
+	}
 });
 
 app.listen(8080);
