@@ -1,0 +1,82 @@
+html {
+	background-color: #eee;
+}
+
+body {
+	font-family: "Open Sans";
+	font-size: 18px;
+	color: #333;
+}
+
+#main {
+	width: 500px;
+	margin: 0 auto;
+	padding: 3em;
+}
+
+h1 {
+	font-weight: 100;
+	font-size: 1.5em;
+	text-align: center;
+}
+
+#form {
+	width: 100%;
+}
+
+#searchbar {
+	width: 100%;
+	float: left;
+	font-size: 1em;
+	font-weight: 900;
+	padding: 1em;
+	-webkit-appearance: none;
+	-webkit-user-select: text;
+	border: 1px solid #888;
+	border-radius: 6px;
+	outline: none;
+	-webkit-transition: border-color, .2s;
+	background: #eaeaea;
+}
+
+#searchbar:focus {
+	border-color: #4797d3;
+}
+
+#output {
+	clear: left;
+	padding: 3em 0;
+}
+
+.person {
+	float: left;
+	background-color: white;
+	border-radius: 10px;
+	padding: 2em;
+	margin: 1em;
+}
+
+.person h2 {
+	margin: 0 0 1em 0;
+	font-size: 1em;
+}
+
+.person h3 {
+	margin: 0.5em 0 0 0;
+	font-size: 0.6em;
+}
+
+#go {
+	position: absolute;
+	margin: 15px 0 0 -46px;
+	width: 30px;
+	height: 30px;
+    border-radius: 50%;
+    color: white;
+    font: bold 15px/13px Helvetica, Verdana, Tahoma;
+    padding: -2px 3px 0 3px;
+    text-align: center;
+    border: none;
+	cursor: pointer;
+	display:none;
+}
