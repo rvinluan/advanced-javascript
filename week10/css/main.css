@@ -54,16 +54,23 @@ h1 {
 	border-radius: 10px;
 	padding: 2em;
 	margin: 1em;
+	box-sizing: border-box;
+}
+
+.person:hover {
+	background-color: #e3f6f9;
 }
 
 .person h2 {
 	margin: 0 0 1em 0;
-	font-size: 1em;
+	font-size: 1.4em;
+	font-weight: 100;
 }
 
 .person h3 {
 	margin: 0.5em 0 0 0;
-	font-size: 0.6em;
+	font-size: 0.7em;
+	font-style: italic;
 }
 
 #go {
